@@ -7,10 +7,12 @@ environment:
   sdk: ^3.5.1
 
 dependencies:
+  card_swiper: ^3.0.1
   flutter:
     sdk: flutter
+  flutter_riverpod: ^2.6.1
   google_fonts: ^6.3.0
-  percent_indicator: ^4.2.5
+  just_audio: ^0.9.46
 
 dev_dependencies:
   flutter_test:
@@ -21,4 +23,5 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/
+    - assets/covers/
+    - assets/audios/
