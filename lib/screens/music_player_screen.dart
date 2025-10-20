@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:music_player_app/constants/app_icons.dart';
 import 'package:music_player_app/providers/audio_player_provider.dart';
 import 'package:music_player_app/widgets/progress_bar.dart';
 
@@ -57,186 +59,225 @@ class MusicPlayerScreen extends ConsumerWidget {
               style: IconButton.styleFrom(
                 backgroundColor: Colors.transparent,
               ),
-              icon: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                color: Color(0xFFDDDDDD),
-                size: 16,
+              icon: SvgPicture.asset(
+                AppIcons.arrowBack,
+                width: 24,
+                colorFilter: const ColorFilter.mode(
+                  Color(0xFFDDDDDD),
+                  BlendMode.srcIn,
+                ),
               ),
             ),
             actions: [
               IconButton(
                 onPressed: () {},
-                icon: const Icon(
-                  Icons.more_vert_outlined,
-                  color: Colors.white,
-                  size: 24,
+                icon: SvgPicture.asset(
+                  AppIcons.moreVert,
+                  width: 24,
+                  colorFilter: const ColorFilter.mode(
+                    Color(0xFFDDDDDD),
+                    BlendMode.srcIn,
+                  ),
                 ),
               ),
             ],
           ),
-          body: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SongCoverSwiper(
-                  covers:
-                      audioPlayer.sequence.map((song) => song.cover).toList(),
-                  index: audioPlayer.realIndex,
-                  onIndexChanged: (i) {
-                    ref.read(audioPlayerProvider.notifier).changeSong(i);
-                  },
+          body: Column(
+            children: [
+              const SizedBox(height: 16),
+              SongCoverSwiper(
+                covers: audioPlayer.sequence.map((song) => song.cover).toList(),
+                index: audioPlayer.realIndex,
+                onIndexChanged: (i) {
+                  ref.read(audioPlayerProvider.notifier).changeSong(i);
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 24,
                 ),
-                const SizedBox(height: 24),
-
-                // Título y artista
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            audioPlayer.currentSong.title,
-                            style: const TextStyle(
-                              color: Color(0xffDFDFDF),
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            audioPlayer.currentSong.artist,
-                            style: const TextStyle(
-                              color: Color(0xffBABABA),
-                              fontSize: 16,
-                              fontWeight: FontWeight.normal,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(
-                        Icons.favorite_outline_rounded,
-                        color: Color(0xFF6C6C6C),
-                      ),
-                    )
-                  ],
-                ),
-                const SizedBox(height: 20),
-
-                // Barra de progreso
-                Column(
-                  children: [
-                    ProgressBar(
-                      percent: audioPlayer.progress,
-                      onChangePercent:
-                          ref.read(audioPlayerProvider.notifier).changeProgress,
-                    ),
-                    const SizedBox(height: 8),
+                    // Título y artista
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          _formatDuration(current),
-                          style: const TextStyle(
-                              color: Colors.white70, fontSize: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                audioPlayer.currentSong.title,
+                                style: const TextStyle(
+                                  color: Color(0xffDFDFDF),
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                audioPlayer.currentSong.artist,
+                                style: const TextStyle(
+                                  color: Color(0xffBABABA),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        Text(
-                          _formatDuration(duration),
-                          style: const TextStyle(
-                              color: Colors.white70, fontSize: 12),
+                        IconButton(
+                          onPressed: () {},
+                          icon: SvgPicture.asset(
+                            AppIcons.heart,
+                            width: 24,
+                            colorFilter: const ColorFilter.mode(
+                              Color(0xFF6C6C6C),
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Barra de progreso
+                    Column(
+                      children: [
+                        ProgressBar(
+                          percent: audioPlayer.progress,
+                          onChangePercent: ref
+                              .read(audioPlayerProvider.notifier)
+                              .changeProgress,
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              _formatDuration(current),
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 12,
+                              ),
+                            ),
+                            Text(
+                              _formatDuration(duration),
+                              style: const TextStyle(
+                                color: Colors.white70,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Controles
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            ref
+                                .read(audioPlayerProvider.notifier)
+                                .toggleRepeat();
+                          },
+                          icon: SvgPicture.asset(
+                            audioPlayer.repeat == LoopMode.one
+                                ? AppIcons.repeatOne
+                                : AppIcons.repeat,
+                            width: 24,
+                            colorFilter: ColorFilter.mode(
+                              audioPlayer.repeat == LoopMode.all ||
+                                      audioPlayer.repeat == LoopMode.one
+                                  ? const Color(0xffDFDFDF)
+                                  : const Color(0xFF6D6D6D),
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        IconButton(
+                          onPressed: () {
+                            ref
+                                .read(audioPlayerProvider.notifier)
+                                .previousSong();
+                          },
+                          icon: SvgPicture.asset(
+                            AppIcons.previous,
+                            width: 26,
+                            colorFilter: const ColorFilter.mode(
+                              Color(0xFFDFDFDF),
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        IconButton(
+                          onPressed: () {
+                            if (isPlaying) {
+                              ref.read(audioPlayerProvider.notifier).pause();
+                            } else {
+                              ref.read(audioPlayerProvider.notifier).play();
+                            }
+                          },
+                          style: IconButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            shape: const CircleBorder(),
+                            minimumSize: const Size(72, 72),
+                          ),
+                          icon: SvgPicture.asset(
+                            isPlaying ? AppIcons.pause : AppIcons.play,
+                            width: 32,
+                            colorFilter: const ColorFilter.mode(
+                              Color(0xFF1C1B1B),
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        IconButton(
+                          onPressed: () {
+                            ref.read(audioPlayerProvider.notifier).nextSong();
+                          },
+                          icon: SvgPicture.asset(
+                            AppIcons.next,
+                            width: 26,
+                            colorFilter: const ColorFilter.mode(
+                              Color(0xFFDFDFDF),
+                              BlendMode.srcIn,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        IconButton(
+                          onPressed: () {
+                            ref
+                                .read(audioPlayerProvider.notifier)
+                                .toggleShuffle();
+                          },
+                          icon: SvgPicture.asset(
+                            AppIcons.shuffle,
+                            width: 24,
+                            colorFilter: ColorFilter.mode(
+                              audioPlayer.shuffled
+                                  ? const Color(0xffDFDFDF)
+                                  : const Color(0xFF6D6D6D),
+                              BlendMode.srcIn,
+                            ),
+                          ),
                         ),
                       ],
                     ),
                   ],
                 ),
-                const SizedBox(height: 20),
-
-                // Controles
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      onPressed: () {
-                        ref.read(audioPlayerProvider.notifier).toggleRepeat();
-                      },
-                      icon: Icon(
-                        audioPlayer.repeat == LoopMode.one
-                            ? Icons.repeat_one_rounded
-                            : Icons.repeat_rounded,
-                        color: audioPlayer.repeat == LoopMode.all ||
-                                audioPlayer.repeat == LoopMode.one
-                            ? const Color(0xffDFDFDF)
-                            : const Color(0xFF6D6D6D),
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    IconButton(
-                      onPressed: () {
-                        ref.read(audioPlayerProvider.notifier).previousSong();
-                      },
-                      icon: const Icon(
-                        Icons.skip_previous,
-                        color: Color(0xffDFDFDF),
-                        size: 26,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    IconButton(
-                      onPressed: () {
-                        if (isPlaying) {
-                          ref.read(audioPlayerProvider.notifier).pause();
-                        } else {
-                          ref.read(audioPlayerProvider.notifier).play();
-                        }
-                      },
-                      style: IconButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shape: const CircleBorder(),
-                        minimumSize: const Size(72, 72),
-                      ),
-                      icon: Icon(
-                        isPlaying
-                            ? Icons.pause_rounded
-                            : Icons.play_arrow_rounded,
-                        color: const Color(0xFF1C1B1B),
-                        size: 40,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    IconButton(
-                      onPressed: () {
-                        ref.read(audioPlayerProvider.notifier).nextSong();
-                      },
-                      icon: const Icon(
-                        Icons.skip_next,
-                        color: Color(0xffDFDFDF),
-                        size: 26,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    IconButton(
-                      onPressed: () {
-                        ref.read(audioPlayerProvider.notifier).toggleShuffle();
-                      },
-                      icon: Icon(
-                        Icons.shuffle_rounded,
-                        color: audioPlayer.shuffled
-                            ? const Color(0xffDFDFDF)
-                            : const Color(0xFF6D6D6D),
-                        size: 24,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ],
@@ -287,8 +328,9 @@ class _SongCoverSwiperState extends State<SongCoverSwiper> {
         controller: controller,
         itemCount: widget.covers.length,
         onIndexChanged: widget.onIndexChanged,
-        viewportFraction: 1,
-        scale: 0.9,
+        viewportFraction: (MediaQuery.of(context).size.width - 40) /
+            (MediaQuery.of(context).size.width),
+        scale: 0.8,
         loop: false,
         itemBuilder: (context, index) {
           return ClipRRect(
